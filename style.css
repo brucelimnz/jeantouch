@@ -17,9 +17,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* --- CHANGE START HERE --- */
-    padding: 30px 30px 15px 30px; /* Increased top padding to 30px */
-    /* --- CHANGE END HERE --- */
+    padding: 30px 30px 15px 30px;
     box-sizing: border-box;
 }
 
@@ -38,7 +36,15 @@ body {
     text-align: center;
     margin-bottom: 30px;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+    /* --- NEW: Add transition for the box pop effect --- */
+    transition: transform 0.1s ease-out;
 }
+
+/* --- NEW: Class for when the counter box should pop --- */
+.counter-box.pop {
+    transform: scale(1.03); /* Slightly larger */
+}
+
 
 .counter-label {
     font-size: 1.1em;
@@ -51,7 +57,15 @@ body {
     font-weight: bold;
     color: #f0f0f0;
     display: block;
+    /* --- NEW: Add transition for the number value pop effect --- */
+    transition: transform 0.1s ease-out;
 }
+
+/* --- NEW: Optional: Make the number itself pop slightly when updated --- */
+.counter-value.pop-number {
+    transform: scale(1.1);
+}
+
 
 .touch-button {
     background-color: #007bff;
