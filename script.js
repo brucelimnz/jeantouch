@@ -3,15 +3,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const touchButton = document.getElementById('touchButton');
     const resetButton = document.getElementById('resetButton');
     const counterBoxElement = document.querySelector('.counter-box');
+    const themeToggleButton = document.getElementById('themeToggleButton'); // Get the new theme toggle button
+    const bodyElement = document.body; // Reference to the body element
 
-    // --- CHANGES START HERE ---
-    // 1. Load the count from localStorage when the page loads
     let touchCount = parseInt(localStorage.getItem('touchCount') || '0', 10);
-    // If 'touchCount' doesn't exist in localStorage, it will be '0'.
-    // parseInt converts the string back to a number.
-    // --- CHANGES END HERE ---
 
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // --- NEW: Theme Management Functions ---
+    const THEME_STORAGE_KEY = 'appTheme'; // Key for localStorage
+
+    function applyTheme(theme) {
+        if (theme === 'light') {
+            bodyElement.classList.add('light-mode');
+            themeToggleButton.textContent = '🌙'; // Moon emoji for light mode (suggests switching to dark)
+        } else {
+            bodyElement.classList.remove('light-mode');
+            themeToggleButton.textContent = '💡'; // Bulb emoji for dark mode (suggests switching to light)
+        }
+        localStorage.setItem(THEME_STORAGE_KEY, theme); // Save the current theme
+    }
+
+    function toggleTheme() {
+        const currentTheme = bodyElement.classList.contains('light-mode') ? 'light' : 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(newTheme);
+    }
+
+    // Load theme on initial page load
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedTheme) {
+        applyTheme(savedTheme); // Apply saved theme
+    } else {
+        // Optional: Set a default theme if none is saved (e.g., based on system preference or 'dark')
+        // For now, we default to dark mode if no preference is saved in localStorage (as per current CSS default)
+        // If you want to check system preference:
+        // const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        // applyTheme(prefersLight ? 'light' : 'dark');
+        applyTheme('dark'); // Explicitly apply default dark if no saved theme
+    }
+    // --- END NEW: Theme Management Functions ---
+
 
     function playBuiltInClickSound() {
         if (!audioContext) return;
@@ -34,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateCounterDisplay() {
         touchCounterElement.textContent = touchCount.toString().padStart(2, '0');
-        // --- NEW: Save the count to localStorage whenever the display updates ---
         localStorage.setItem('touchCount', touchCount);
     }
 
@@ -53,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         touchCount++;
-        updateCounterDisplay(); // This now also saves to localStorage
+        updateCounterDisplay();
         triggerHapticFeedback();
         playBuiltInClickSound();
 
@@ -74,7 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         touchCount = 0;
-        updateCounterDisplay(); // This now also saves to localStorage (reset value)
+        updateCounterDisplay();
         triggerHapticFeedback();
     });
+
+    // --- NEW: Add event listener for the theme toggle button ---
+    themeToggleButton.addEventListener('click', toggleTheme);
 });
